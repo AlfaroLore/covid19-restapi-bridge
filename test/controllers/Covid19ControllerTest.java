@@ -1,5 +1,4 @@
 package controllers;
-
 import org.junit.Test;
 import play.Application;
 import play.inject.guice.GuiceApplicationBuilder;
@@ -12,7 +11,7 @@ import static play.mvc.Http.Status.OK;
 import static play.test.Helpers.GET;
 import static play.test.Helpers.route;
 
-public class HomeControllerTest extends WithApplication {
+public class Covid19ControllerTest extends WithApplication {
 
     @Override
     protected Application provideApplication() {
@@ -20,13 +19,12 @@ public class HomeControllerTest extends WithApplication {
     }
 
     @Test
-    public void testIndex() {
+    public void testGetReportByCountryAndDate() {
         Http.RequestBuilder request = new Http.RequestBuilder()
                 .method(GET)
-                .uri("/");
+                .uri("/country?date=2020-04-01&code=it");
 
         Result result = route(app, request);
-        assertEquals(303, result.status());
+        assertEquals(OK, result.status());
     }
-
 }
