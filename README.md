@@ -1,4 +1,7 @@
 # covid19-restapi-bridge
+This application's goal is to consume the REST services from:
+https://rapidapi.com/Gramzivi/api/covid-19-data
+
 In order to succesfully build and compile this project follow the steps:
 1. In command line run sbt clean compile
 2. In command line run sbt run
