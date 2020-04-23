@@ -3,11 +3,16 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           controllers.HomeController.index
+GET     /                           controllers.HomeController.redirectDocs
 
 
 # An example controller showing a sample home page
-GET     /country                           controllers.HomeController.returnCountryReport(date ?= "", code ?= "")
+GET     /country                           controllers.Covid19Controller.returnCountryReport(date ?= "", code ?= "")
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+
+# Swagger API
+GET           /swagger.json                                             controllers.ApiHelpController.getResources
+GET           /docs/                                                    controllers.Assets.at(path="/public/lib/swagger-ui",file="index.html")
+GET           /docs/*file                                               controllers.Assets.at(path="/public/lib/swagger-ui",file)

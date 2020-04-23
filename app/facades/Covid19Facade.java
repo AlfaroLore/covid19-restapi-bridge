@@ -2,8 +2,6 @@ package facades;
 
 
 import play.libs.Json;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpEntity;
@@ -13,6 +11,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.inject.Inject;
+import play.Logger;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -28,10 +27,11 @@ public class Covid19Facade {
 
     public List<Country> getCountryDailyReportByCode(String date, String code) {
 
-        final Logger log = LoggerFactory.getLogger("access");
+        //TODO. Add Handle Exception to return HTTP Missing params status
 
         HttpClient httpclient = HttpClientBuilder.create().build();
         try {
+
             HttpGet getRequest = new HttpGet(String.format("%s/report/country/code?format=json&date-format=YYYY-MM-DD&date=%s&code=%s",
                     this.conf.getRapidApiConfigurationServiceBaseUrl(),
                     date,
@@ -40,18 +40,23 @@ public class Covid19Facade {
             getRequest.addHeader("x-rapidapi-host", this.conf.getRapidApiConfigurationServiceHost());
             getRequest.addHeader("x-rapidapi-key", this.conf.getRapidApiConfigurationServiceKey());
 
+
             HttpResponse httpResponse = httpclient.execute(getRequest);
             HttpEntity entity = httpResponse.getEntity();
 
             if (entity != null) {
                 String body = EntityUtils.toString(entity);
+
                 List<Country> list = Json.mapper().readValue(body, new TypeReference<List<Country>>(){});
+
+                Logger.info(">>> Report retrieved: " + list.size());
 
                 return list;
             }
 
         } catch (Exception e) {
             e.printStackTrace();
+            //TODO. Add Handler Exception to return HTTP Bad Request status
         } finally {
             httpclient.getConnectionManager().shutdown();
         }
