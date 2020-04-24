@@ -25,14 +25,27 @@ public class Covid19Controller extends Controller{
     public Covid19Controller(Covid19Facade facade){
         this.covid19Facade=facade;
     }
-    @ApiOperation(value = "Gets a covid19 report by country and date", notes = "Returns an array of Country info.")
+
+    @ApiOperation(value = "Get a daily report for a specific country by country code. Country code is in ISO 3166-1 standard. ", notes = "Returns an array of Country info.")
     @ApiResponses(value = {
             @ApiResponse(code = Http.Status.OK, message = "Ok", response = Country.class, responseContainer = "List"),
             @ApiResponse(code = Http.Status.BAD_REQUEST, message = "Bad request"),
             @ApiResponse(code = STATUS_CODE_FOR_MISSING_INVALID_PARAMETERS, message = STATUS_DESC_FOR_MISSING_INVALID_PARAMETERS)
     })
-    public Result returnCountryReport(@ApiParam(value = "Date") String date, @ApiParam(value = "Country code") String code) {
+    public Result getCountryDailyReportByCode(@ApiParam(value = "Date") String date, @ApiParam(value = "Country code") String code) {
         List<Country> countryList = this.covid19Facade.getCountryDailyReportByCode(date, code);
+        JsonNode content = Json.toJson(countryList);
+        return ok(content);
+    }
+
+    @ApiOperation(value = "Get latest data for specific country. Country Name And Format Are In Query.", notes = "Returns an array of Country info.")
+    @ApiResponses(value = {
+            @ApiResponse(code = Http.Status.OK, message = "Ok", response = Country.class, responseContainer = "List"),
+            @ApiResponse(code = Http.Status.BAD_REQUEST, message = "Bad request"),
+            @ApiResponse(code = STATUS_CODE_FOR_MISSING_INVALID_PARAMETERS, message = STATUS_DESC_FOR_MISSING_INVALID_PARAMETERS)
+    })
+    public Result getLatestCountryDataByName(@ApiParam(value = "name") String name) {
+        List<Country> countryList = this.covid19Facade.getLatestCountryDataByName(name);
         JsonNode content = Json.toJson(countryList);
         return ok(content);
     }

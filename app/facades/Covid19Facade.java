@@ -65,4 +65,44 @@ public class Covid19Facade {
 
     }
 
+
+    public List<Country> getLatestCountryDataByName(String countryName) {
+
+        //TODO. Add Handle Exception to return HTTP Missing params status
+
+        HttpClient httpclient = HttpClientBuilder.create().build();
+        try {
+
+            HttpGet getRequest = new HttpGet(String.format("%s/country?format=json&name=%s",
+                    this.conf.getRapidApiConfigurationServiceBaseUrl(),
+                    countryName));
+
+            getRequest.addHeader("x-rapidapi-host", this.conf.getRapidApiConfigurationServiceHost());
+            getRequest.addHeader("x-rapidapi-key", this.conf.getRapidApiConfigurationServiceKey());
+
+
+            HttpResponse httpResponse = httpclient.execute(getRequest);
+            HttpEntity entity = httpResponse.getEntity();
+
+            if (entity != null) {
+                String body = EntityUtils.toString(entity);
+
+                List<Country> list = Json.mapper().readValue(body, new TypeReference<List<Country>>(){});
+
+                Logger.info(">>> Report retrieved: " + list.size());
+
+                return list;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            //TODO. Add Handler Exception to return HTTP Bad Request status
+        } finally {
+            httpclient.getConnectionManager().shutdown();
+        }
+
+        return new ArrayList<>();
+
+    }
+
 }
